@@ -7,7 +7,7 @@
 # Les deux dossiers sont définis dans config.sh, à côté de ce script.
 #
 # Installation (une fois) : lien dans ~/.local/bin, qui est dans le PATH
-#   ln -s /home/tony/Documents/Développement/dev_python/scripts-github/clone-pr.sh ~/.local/bin/clone-pr
+#   ln -s <dossier de ce dépôt>/clone-pr.sh ~/.local/bin/clone-pr
 #
 # Usage :
 #   clone-pr https://github.com/OCA/reporting-engine/pull/1203

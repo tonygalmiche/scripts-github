@@ -4,5 +4,5 @@
 # Dossier contenant les clones des dépôts Github (un clone par dépôt et par branche ou PR)
 DEPOTS_DIR="/opt/addons/OCA"
 
-# Dossier des addons de la base de test : y sont créés les liens vers les modules des clones
+# Dossier d'addons d'Odoo (dans l'addons_path) : y sont créés les liens vers les modules des clones
 ADDONS_DIR="/opt/addons/facturation-electronique"

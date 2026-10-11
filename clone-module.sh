@@ -7,7 +7,7 @@
 # Les deux dossiers sont définis dans config.sh, à côté de ce script.
 #
 # Installation (une fois) : lien dans ~/.local/bin, qui est dans le PATH
-#   ln -s /home/tony/Documents/Développement/dev_python/scripts-github/clone-module.sh ~/.local/bin/clone-module
+#   ln -s <dossier de ce dépôt>/clone-module.sh ~/.local/bin/clone-module
 #
 # Usage :
 #   clone-module https://github.com/OCA/field-service/tree/18.0/fieldservice
@@ -55,26 +55,30 @@ done
 
 CLONE_DIR="${DEPOTS_DIR}/${REPO}-${BRANCH}"
 
-echo "==> Dépôt   : ${OWNER}/${REPO}"
-echo "==> Branche : ${BRANCH}"
-echo "==> Module  : ${MODULE}"
+# Lance une commande sans rien afficher, sauf sa sortie en cas d'erreur
+silencieux() {
+    local sortie
+    if ! sortie=$("$@" 2>&1); then
+        echo "$sortie"
+        return 1
+    fi
+}
 
 if [ -d "$CLONE_DIR" ]; then
-    echo "==> Mise à jour du clone ${CLONE_DIR}..."
+    echo "- ${OWNER}/${REPO} ${BRANCH} ${MODULE} : mise à jour du clone"
     if [ -n "$(git -C "$CLONE_DIR" status --porcelain)" ]; then
         echo "Le clone contient des modifications locales : mise à jour annulée."
         git -C "$CLONE_DIR" status --short
         exit 1
     fi
-    git -C "$CLONE_DIR" fetch -q origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
-    git -C "$CLONE_DIR" checkout -q "$BRANCH"
-    git -C "$CLONE_DIR" merge -q --ff-only "origin/${BRANCH}"
+    silencieux git -C "$CLONE_DIR" fetch origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
+    silencieux git -C "$CLONE_DIR" checkout "$BRANCH"
+    silencieux git -C "$CLONE_DIR" merge --ff-only "origin/${BRANCH}"
 else
-    echo "==> Clone dans ${CLONE_DIR}..."
-    git clone -q --filter=blob:none --single-branch --branch "$BRANCH" \
+    echo "- ${OWNER}/${REPO} ${BRANCH} ${MODULE} : clone"
+    silencieux git clone --filter=blob:none --single-branch --branch "$BRANCH" \
         "https://github.com/${OWNER}/${REPO}.git" "$CLONE_DIR"
 fi
-echo "    $(git -C "$CLONE_DIR" log -1 --format='%h %cd %s' --date=short)"
 
 if [ ! -f "${CLONE_DIR}/${MODULE}/__manifest__.py" ]; then
     echo "Module ${MODULE} introuvable dans ${OWNER}/${REPO} (branche ${BRANCH})."
@@ -89,4 +93,4 @@ if [ -e "$link" ] && [ ! -L "$link" ]; then
 fi
 ln -sfn "$target" "$link"
 
-echo "==> Terminé. Lien : ${link} -> ${target}"
+echo "- Lien : ${link} -> ${target}"
