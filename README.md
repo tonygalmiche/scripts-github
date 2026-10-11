@@ -69,5 +69,6 @@ Une fois la PR fusionnée, remplacer la ligne du module dans le script par la br
 > (`akretion/fr-einvoicing` 18.0) dépend de `l10n_fr_account_invoice_import`, qui n'existe
 > que dans la PR [l10n-france#810](https://github.com/OCA/l10n-france/pull/810), non fusionnée.
 > Le cas 3 repose donc sur du code en cours de développement. Les deux modules sont en
-> `auto_install` : ils s'installent automatiquement dès que leurs dépendances le sont.
+> `auto_install` : ils s'installent avec la dernière de leurs dépendances, mais pas lors
+> de la mise à jour de la liste des applications.
 > Ce module n'est utilisé que par le cas 3.
