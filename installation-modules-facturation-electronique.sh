@@ -52,10 +52,8 @@ CAS3_MODULES=(
     akretion/fr-einvoicing/18.0/l10n_fr_einvoicing_import
     # PR #810 non mergée dans OCA/l10n-france : fork Akretion
     akretion/l10n-france/18-add-l10n_fr_account_invoice_import/l10n_fr_account_invoice_import
-    OCA/edi/18.0/account_invoice_import
-    OCA/edi/18.0/account_invoice_import_facturx
-    OCA/edi/18.0/base_facturx
-    OCA/edi/18.0/base_business_document_import
+    # PR #1426 non mergée dans OCA/edi : nouvelle version d'account_invoice_import, fork Akretion
+    akretion/edi/18.0-account_invoice_import-revolution/account_invoice_import
 )
 
 MODULES=("${CAS1_MODULES[@]}")
