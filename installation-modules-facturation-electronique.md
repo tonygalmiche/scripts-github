@@ -108,7 +108,7 @@ systemctl restart odoo
 ```bash
 su odoo
 /opt/scripts-github/installation-modules-facturation-electronique.sh 2
-pip install --user --break-system-packages 'pyfrctc>=0.23'
+pip install --user --break-system-packages 'pyfrctc>=0.24'
 exit
 systemctl restart odoo
 ```
@@ -137,6 +137,26 @@ git -C /opt/scripts-github pull
 ```
 
 Puis la commande `pip` affichée à la fin, `systemctl restart odoo` et mise à jour des modules dans Odoo.
+
+## Base de test sur une VM (ex. `bookworm`)
+
+La VM lit les modules du PC par le dossier partagé `/media/sf_dev_odoo` : script lancé **sur le PC** (`config.sh` : `dev_odoo/18.0/OCA` et `dev_odoo/18.0/facturation-electronique`), rien à installer sur la VM.
+
+```bash
+# Sur le PC (tony)
+~/Documents/Développement/dev_odoo/dev_python/scripts-github/installation-modules-facturation-electronique.sh 1
+```
+
+Sur la VM (`odoo`) : ajouter `/media/sf_dev_odoo/18.0/facturation-electronique` à l'`addons_path` de la base, puis :
+
+```bash
+# Librairies : --upgrade sur factur-x seulement (pas sur python-stdnum)
+pip install --user --break-system-packages --upgrade 'factur-x>=7.5'
+python3 /opt/odoo18/odoo-bin -c /etc/odoo/<base>.conf -d <base> -i l10n_fr_account_invoice_en16931 --stop-after-init
+```
+
+- Clones partagés par toutes les bases de test : mettre à jour `fr-einvoicing-18.0` met aussi à jour les modules des cas 2 et 3.
+- Liens obsolètes depuis la réécriture du 13/10/2026 (`account_invoice_import_facturx`, `base_facturx`, `base_business_document_import`) : à supprimer avant le cas 3.
 
 ## Vérifier les librairies vues par Odoo
 
