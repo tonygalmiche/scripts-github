@@ -100,6 +100,6 @@ fi
 echo "== Terminé =="
 if [ -n "$LIBS" ]; then
     echo "- Installer ou mettre à jour les librairies Python dans l'environnement d'Odoo :"
-    echo "  pip install --break-system-packages ${LIBS}"
+    echo "  pip install --user --break-system-packages ${LIBS}"
 fi
 echo "- Mettre à jour la liste des applications dans Odoo, puis installer les modules"
