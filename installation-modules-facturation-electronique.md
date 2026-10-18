@@ -1,5 +1,7 @@
 # Mise en place de la facturation électronique (Odoo 18.0)
 
+Vérifié le 18/10/2026 (cas 1 : dépendances des modules, Debian 13).
+
 ## Odoo 18.0
 
 Clone git plutôt que zip, pour mettre à jour avec `git pull` :
@@ -16,28 +18,30 @@ systemctl start odoo
 
 ## Préparation
 
+En root. Les scripts sont lancés en `odoo` : clones et liens lui appartiennent directement.
+
 ```bash
 git clone https://github.com/tonygalmiche/scripts-github.git /opt/scripts-github
-cd /opt/scripts-github
-# Renseigner DEPOTS_DIR et ADDONS_DIR
-cp config.exemple.sh config.sh && nano config.sh
-mkdir -p /opt/addons/OCA /opt/addons/facturation-electronique
+chown -R odoo:odoo /opt/scripts-github
+# Valeurs par défaut : /opt/addons/OCA et /opt/addons/facturation-electronique
+sudo -u odoo cp /opt/scripts-github/config.exemple.sh /opt/scripts-github/config.sh
+sudo -u odoo mkdir -p /opt/addons/OCA /opt/addons/facturation-electronique
 ```
 
-Ajouter `ADDONS_DIR` à l'`addons_path` d'Odoo.
+Ajouter `ADDONS_DIR` à l'`addons_path` des seules bases qui facturent.
 
 ## Cas 1 : génération Factur-X, sans envoi sur la PA
 
 ```bash
-/opt/scripts-github/installation-modules-facturation-electronique.sh 1
-chown -R odoo:odoo /opt/addons/OCA /opt/addons/facturation-electronique
-pip install --break-system-packages --upgrade 'factur-x>=7.5' 'python-stdnum'
+sudo -u odoo /opt/scripts-github/installation-modules-facturation-electronique.sh 1
+pip install --break-system-packages 'factur-x>=7.5' 'python-stdnum'
 ```
 
 Saxon Server :
 
 ```bash
-apt install openjdk-17-jre
+# Java 21 sous Debian 13 (openjdk-17 n'y existe plus)
+apt install default-jre-headless
 mkdir -p /opt/saxon-server && cd /opt/saxon-server
 wget https://github.com/willemvlh/saxon-server/releases/download/v1.15/saxon-server-1.15.jar
 adduser --system --group --no-create-home saxon-server
@@ -88,9 +92,8 @@ systemctl restart odoo
 ## Cas 2 : cas 1 + envoi de la facture sur la PA
 
 ```bash
-/opt/scripts-github/installation-modules-facturation-electronique.sh 2
-chown -R odoo:odoo /opt/addons/OCA /opt/addons/facturation-electronique
-pip install --break-system-packages --upgrade 'pyfrctc>=0.23'
+sudo -u odoo /opt/scripts-github/installation-modules-facturation-electronique.sh 2
+pip install --break-system-packages 'pyfrctc>=0.23'
 systemctl restart odoo
 ```
 
@@ -99,8 +102,7 @@ systemctl restart odoo
 ## Cas 3 : cas 2 + réception des factures fournisseurs depuis la PA
 
 ```bash
-/opt/scripts-github/installation-modules-facturation-electronique.sh 3
-chown -R odoo:odoo /opt/addons/OCA /opt/addons/facturation-electronique
+sudo -u odoo /opt/scripts-github/installation-modules-facturation-electronique.sh 3
 systemctl restart odoo
 ```
 
@@ -111,7 +113,8 @@ systemctl restart odoo
 
 ```bash
 sudo -u odoo git -C /opt/odoo18 pull
-/opt/scripts-github/installation-modules-facturation-electronique.sh <cas>
+sudo -u odoo git -C /opt/scripts-github pull
+sudo -u odoo /opt/scripts-github/installation-modules-facturation-electronique.sh <cas>
 ```
 
 Puis la commande `pip` affichée à la fin, `systemctl restart odoo` et mise à jour des modules dans Odoo.
